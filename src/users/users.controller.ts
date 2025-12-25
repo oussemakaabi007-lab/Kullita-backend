@@ -6,7 +6,12 @@ import { use } from 'passport';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
+  @Get('test')
+test(@Req() req: any) {
+  console.log('All Cookies:', req.cookies);
+  console.log('Headers:', req.headers);
+  return { cookies: req.cookies };
+}
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   getProfile(@Req() req: any) {
