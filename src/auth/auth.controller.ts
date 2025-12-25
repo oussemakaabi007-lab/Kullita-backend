@@ -8,7 +8,11 @@ export class AuthController {
  @Post('register')
 async register(@Body() body: any) {
   const { email, name, password, role } = body;
-  return this.authService.register(email, name, password, role);
+  const user= this.authService.register(email, name, password, role);
+  this.authService.sendWelcomeEmail(email,name).catch(err => {
+      console.error('Email failed to send:', err);
+    });
+  return user;
 }
 
   @Post('login')

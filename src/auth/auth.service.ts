@@ -73,5 +73,21 @@ export class AuthService {
 
     return { message: 'Password updated successfully' };
   }
+  async sendWelcomeEmail(userEmail: string, userName: string) {
+    await this.mailerService.sendMail({
+      to: userEmail,
+      subject: 'Welcome to Kullita! 🎵',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h1 style="color: #be00b8;">Hi ${userName}!</h1>
+          <p>We are happy to get you with us.</p>
+          <p>We wish you an amazing experience!</p>
+          <br />
+          <p>Keep kulliting,</p>
+          <p>The Kullita Team</p>
+        </div>
+      `,
+    });
+  }
   
 }
