@@ -23,8 +23,8 @@ async login(
   // 2. Set the cookie
   res.cookie('token', result.access_token, {
     httpOnly: true,
-    secure: false, // Set to true if using HTTPS
-    sameSite: 'lax',
+    secure: true, // Set to true if using HTTPS
+    sameSite: 'none',
     path: '/',
     // This makes the cookie persistent (7 days)
     maxAge: 365 * 24 * 60 * 60 * 1000, 
