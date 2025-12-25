@@ -16,14 +16,16 @@ import { MailerModule } from '@nestjs-modules/mailer';
     MailerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        transport: {
-          service: 'gmail',
-          auth: {
-            user: configService.get<string>('MAIL_USER'),
-            pass: configService.get<string>('MAIL_PASS'),
-          }
-        },connectionTimeout: 10000,
-      greetingTimeout: 10000,
+       host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        type: 'OAuth2',
+        user: configService.get('MAIL_USER'),
+        clientId: configService.get('GOOGLE_CLIENT_ID'),
+        clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
+        refreshToken: configService.get('GOOGLE_REFRESH_TOKEN'),
+      },
         defaults: {
           from: `"Kullita Support" <${configService.get('MAIL_USER')}>`,
         },
