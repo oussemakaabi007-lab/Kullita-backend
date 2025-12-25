@@ -1,13 +1,12 @@
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { MailerService } from '@nestjs-modules/mailer';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/common/database/database.service';
 import {  ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService ,private db: DatabaseService,private mailerService: MailerService,private configService :ConfigService) {}
+  constructor(private usersService: UsersService ,private db: DatabaseService,private configService :ConfigService) {}
 
   async register(email:string,username: string, password: string, role: 'listener' | 'artist') {
    return  await this.usersService.createUser(email,username, password, role);
