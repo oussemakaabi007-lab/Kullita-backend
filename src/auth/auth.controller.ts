@@ -49,8 +49,8 @@ async login(
   async logout(@Res() res: e.Response) {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/',
     });
 
