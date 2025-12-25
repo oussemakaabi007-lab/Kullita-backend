@@ -4,9 +4,10 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/common/database/database.service';
+import {  ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService ,private db: DatabaseService,private mailerService: MailerService) {}
+  constructor(private usersService: UsersService ,private db: DatabaseService,private mailerService: MailerService,private configService :ConfigService) {}
 
   async register(email:string,username: string, password: string, role: 'listener' | 'artist') {
    return  await this.usersService.createUser(email,username, password, role);
@@ -32,21 +33,45 @@ export class AuthService {
     `;
     await this.db.query(updateQuery, [token, expiry, user.id]);
     const url = `http://localhost:3000/resetpassword?token=${token}`;
-    
-    await this.mailerService.sendMail({
-      to: user.email,
-      subject: 'Password Reset Request',
-      html: `
-        <div style="font-family: sans-serif; background: #121212; color: white; padding: 20px; border-radius: 10px;">
-          <h2>Password Reset</h2>
-          <p>You requested a password reset for your Kullita account.</p>
-          <p>Click the button below to set a new password. This link is valid for 10 minutes.</p>
-          <a href="${url}" style="background: #be00b8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: bold;">Reset Password</a>
-        </div>
-      `,
-    }).catch(err => console.error("SMTP Error:", err.message));;
+    const BREVO_API_KEY = this.configService.get('BREVO_API_KEY');
+   try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { 
+          name: "Kullita Support", 
+          email: "kullita.music@gmail.com" 
+        },
+        to: [{ email: email }],
+        subject: "Reset Your Kullita Password",
+        htmlContent: `
+          <div style="font-family: sans-serif; text-align: center;">
+            <h2>Password Reset</h2>
+            <p>You requested a password reset for your Kullita account.</p>
+            <a href="${url}" style="background: #be00b8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block;">Reset Password</a>
+            <p style="margin-top: 20px; font-size: 12px; color: #666;">If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `
+      }),
+    });
 
-    return { message: 'Reset link sent successfully.' };
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error("Brevo API Error:", result);
+      return { success: false, message: 'Mail server rejected the request.' };
+    }
+
+    return { success: true, message: 'Check your inbox!' };
+  } catch (error) {
+    console.error("Network Error:", error);
+    return { success: false, message: 'Could not connect to mail server.' };
+  }
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -74,11 +99,24 @@ export class AuthService {
     return { message: 'Password updated successfully' };
   }
   async sendWelcomeEmail(userEmail: string, userName: string) {
-    await this.mailerService.sendMail({
-      to: userEmail,
-      subject: 'Welcome to Kullita! 🎵',
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+    const BREVO_API_KEY = this.configService.get('BREVO_API_KEY');
+     try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { 
+          name: "Kullita Support", 
+          email: "kullita.music@gmail.com" 
+        },
+        to: [{ email: userEmail }],
+        subject: "Welcome to Kullita! 🎵",
+        htmlContent: `
+           <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
           <h1 style="color: #be00b8;">Hi ${userName}!</h1>
           <p>We are happy to get you with us.</p>
           <p>We wish you an amazing experience!</p>
@@ -86,8 +124,20 @@ export class AuthService {
           <p>Keep kulliting,</p>
           <p>The Kullita Team</p>
         </div>
-      `,
-    }).catch(err => console.error("SMTP Error:", err.message));;
+        `
+      }),
+    });
+   const result = await response.json();
+
+    if (!response.ok) {
+      console.error("Brevo API Error:", result);
+      return { success: false, message: 'Mail server rejected the request.' };
+    }
+
+    return { success: true, message: 'Check your inbox!' };
+  } catch (error) {
+    console.error("Network Error:", error);
+    return { success: false, message: 'Could not connect to mail server.' };
   }
   
-}
+}}

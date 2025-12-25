@@ -13,23 +13,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-      transport: {
-      host: configService.get('MAIL_HOST'),
-      port: configService.get('MAIL_PORT'),
-      secure: false,
-      auth: {
-        user: configService.get('MAIL_USER'),
-        pass: configService.get('MAIL_PASS'),
-      },
-    },
-        defaults: {
-          from: `"Kullita Support" <${configService.get('MAIL_USER')}>`,
-        },
-      }),
-    }),
     UsersModule,
     AuthModule,
     SongsModule,
