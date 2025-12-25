@@ -24,7 +24,7 @@ async login(
   res.cookie('token', result.access_token, {
     httpOnly: true,
     secure: true, // Set to true if using HTTPS
-    sameSite: 'none',
+    sameSite: 'lax',
     path: '/',
     // This makes the cookie persistent (7 days)
     maxAge: 365 * 24 * 60 * 60 * 1000, 
@@ -50,7 +50,7 @@ async login(
     res.clearCookie('token', {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
+      sameSite: 'lax',
       path: '/',
     });
 
