@@ -5,6 +5,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getRoot() {
-    return { message: 'Music App API is running!' };
+    return { message: 'Kullita API is running!' };
   }
 }
