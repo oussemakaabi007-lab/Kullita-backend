@@ -49,11 +49,11 @@ export class AuthService {
         to: [{ email: email }],
         subject: "Reset Your Kullita Password",
         htmlContent: `
-          <div style="font-family: sans-serif; text-align: center;">
+          <div style="font-family: sans-serif; text-align: center; color: #c9129eff; background-color: #000000ff"">
             <h2>Password Reset</h2>
             <p>You requested a password reset for your Kullita account.</p>
             <a href="${url}" style="background: #be00b8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block;">Reset Password</a>
-            <p style="margin-top: 20px; font-size: 12px; color: #666;">If you didn't request this, you can safely ignore this email.</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #ffffffff;">If you didn't request this, you can safely ignore this email.</p>
           </div>
         `
       }),
@@ -115,8 +115,8 @@ export class AuthService {
         to: [{ email: userEmail }],
         subject: "Welcome to Kullita! 🎵",
         htmlContent: `
-           <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h1 style="color: #be00b8;">Hi ${userName}!</h1>
+           <div style="font-family: Arial, sans-serif; padding: 20px; color: #c9129eff; background-color: #000000ff">
+          <h1 style="color: #ff0077ff;">Hi ${userName}!</h1>
           <p>We are happy to get you with us.</p>
           <p>We wish you an amazing experience!</p>
           <br />
