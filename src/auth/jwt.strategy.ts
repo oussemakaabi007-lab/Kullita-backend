@@ -14,23 +14,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const opts: StrategyOptionsWithoutRequest = {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: e.Request) => {
-          let token : string|null = null;
+          let token :string|null = null;
           if (request && request.cookies) {
             token = request.cookies['token'];
           }
           if (!token && request.headers.authorization) {
         token = request.headers.authorization.split(' ')[1];
       }
-      console.log("token ahhhhhh: ",token);
+      
       return token;
         },
       ]),
-      secretOrKey: 'supersecret',
+      secretOrKey: secret,
     };
     super(opts);
   }
 
   async validate(payload: any) {
+    console.log('Validate function hit! Payload:', payload);
     return { userId: payload.sub, role: payload.role };
   }
 }
