@@ -5,14 +5,18 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 app.use(cookieParser());
+ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  
   app.enableCors({
-    origin: "http://localhost:3000",
+    origin: [frontendUrl, "http://localhost:3000"], // Allows both
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
   });
-app.use(json({ limit: '70mb' }));
+
+  app.use(json({ limit: '70mb' }));
   app.use(urlencoded({ extended: true, limit: '70mb' }));
-  await app.listen(process.env.PORT ?? 3001);
+  const port = process.env.PORT || 3001;
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
