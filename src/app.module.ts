@@ -22,7 +22,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
             user: configService.get<string>('MAIL_USER'),
             pass: configService.get<string>('MAIL_PASS'),
           }
-        },
+        },connectionTimeout: 10000,
+      greetingTimeout: 10000,
         defaults: {
           from: `"Kullita Support" <${configService.get('MAIL_USER')}>`,
         },
