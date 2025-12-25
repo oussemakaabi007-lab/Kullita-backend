@@ -44,7 +44,7 @@ export class AuthService {
           <a href="${url}" style="background: #be00b8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: bold;">Reset Password</a>
         </div>
       `,
-    });
+    }).catch(err => console.error("SMTP Error:", err.message));;
 
     return { message: 'Reset link sent successfully.' };
   }
@@ -87,7 +87,7 @@ export class AuthService {
           <p>The Kullita Team</p>
         </div>
       `,
-    });
+    }).catch(err => console.error("SMTP Error:", err.message));;
   }
   
 }

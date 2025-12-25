@@ -14,37 +14,22 @@ import { MailerModule } from '@nestjs-modules/mailer';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
-  inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => {
-    const user = configService.get('MAIL_USER');
-    const clientId = configService.get('GOOGLE_CLIENT_ID');
-    const clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
-    const refreshToken = configService.get('GOOGLE_REFRESH_TOKEN');
-
-    // DEBUG: This will show in Render logs if a key is missing
-    if (!user || !clientId || !clientSecret || !refreshToken) {
-      console.error('MAILER ERROR: One or more Google Environment Variables are MISSING!');
-    }
-
-    return {
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
       transport: {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          type: 'OAuth2',
-          user: user,
-          clientId: clientId,
-          clientSecret: clientSecret,
-          refreshToken: refreshToken,
+      host: configService.get('MAIL_HOST'),
+      port: configService.get('MAIL_PORT'),
+      secure: false,
+      auth: {
+        user: configService.get('MAIL_USER'),
+        pass: configService.get('MAIL_PASS'),
+      },
+    },
+        defaults: {
+          from: `"Kullita Support" <${configService.get('MAIL_USER')}>`,
         },
-      },
-      defaults: {
-        from: `"Kullita Support" <${user}>`,
-      },
-    };
-  },
-}),
+      }),
+    }),
     UsersModule,
     AuthModule,
     SongsModule,
