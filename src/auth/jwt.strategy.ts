@@ -21,11 +21,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           if (!token && request.headers.authorization) {
         token = request.headers.authorization.split(' ')[1];
       }
-      
+      console.log("token ahhhhhh: ",token);
       return token;
         },
       ]),
-      secretOrKey: secret,
+      secretOrKey: 'supersecret',
     };
     super(opts);
   }
