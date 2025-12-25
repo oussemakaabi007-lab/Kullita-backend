@@ -56,6 +56,10 @@ export class UsersService {
     return { deleted: true };
   }
   async updateUser(userId:number ,userName:string){
+      const checkuser = await this.findByUsername(userName);
+      if(checkuser){
+        throw new Error("username is taken");
+      }
       await this.db.query(`UPDATE "User" SET name = $2 WHERE id = $1`, [userId,userName]);
        const user= await this.db.query(`SELECT * FROM "User" WHERE id = $1`, [userId]);
        const payload = { username: userName, sub: userId, role: user.rows[0].role };
