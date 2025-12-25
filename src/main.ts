@@ -8,7 +8,7 @@ app.use(cookieParser());
  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
   
   app.enableCors({
-    origin: [frontendUrl, "http://localhost:3000"], // Allows both
+    origin: [frontendUrl, "http://localhost:3000"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]

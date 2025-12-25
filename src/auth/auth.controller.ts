@@ -17,20 +17,14 @@ async login(
   @Body('password') password: string,
   @Res() res: e.Response
 ) {
-  // 1. Get the token/user from your service
   const result = await this.authService.login(username, password);
-
-  // 2. Set the cookie
   res.cookie('token', result.access_token, {
     httpOnly: true,
-    secure: true, // Set to true if using HTTPS
+    secure: true,
     sameSite: 'lax',
     path: '/',
-    // This makes the cookie persistent (7 days)
     maxAge: 365 * 24 * 60 * 60 * 1000, 
   });
-
-  // 3. Send the response
   return res.status(HttpStatus.OK).json({
     result
   });
