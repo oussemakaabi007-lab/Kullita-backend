@@ -19,13 +19,21 @@ export class SongsController {
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('recent')
-    showRecent(@Req() req:any) {
-        return this.songsService.findRecentPlays(req.user.userId);
+    showRecent(
+  @Req() req, 
+  @Query('limit') limit: number = 10, 
+  @Query('offset') offset: number = 0
+) {
+        return this.songsService.findRecentPlays(req.user.userId,limit,offset);
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('trending')
-    showTrends(@Req() req:any) {
-        return this.songsService.findTrendingPlays(req.user.userId);
+    showTrends(
+  @Req() req, 
+  @Query('limit') limit: number = 10, 
+  @Query('offset') offset: number = 0
+) {
+        return this.songsService.findTrendingPlays(req.user.userId,limit,offset);
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('search')

@@ -8,8 +8,8 @@ export class SongsService {
   constructor(private db: DatabaseService, private jwt: JwtService) {}
   async home(userId:number){
    const [recent, trending] = await Promise.all([
-    this.findRecentPlays(userId),
-    this.findTrendingPlays(userId)
+    this.findRecentPlays(userId,10,0),
+    this.findTrendingPlays(userId,10,0)
   ]);
   return [recent, trending];
   }
@@ -17,7 +17,7 @@ export class SongsService {
     await this.db.query(`insert into "playhistory" ("user_id","song_id","played_at") values($1,$2,now()) RETURNING *`,[userId,songId]);
     return {added:true}
   }
-  async findRecentPlays(userId:number){
+  async findRecentPlays(userId:number,limit:number=10,offset:number=0){
     const res=await this.db.query(`
       SELECT
     T1.song_id as id,
@@ -53,15 +53,15 @@ WHERE
     T1.rn = 1
 ORDER BY
     T1.played_at DESC
-LIMIT 50;
-    `, [userId]);
+LIMIT $2 OFFSET $3;
+    `, [userId,limit,offset]);
     return {
     id: 'recent',
     title: 'Recently played',
     items: res.rows 
   };
   }
-  async findTrendingPlays(userId: number) {
+  async findTrendingPlays(userId: number,limit:number=10, offset:number=0) {
   const res = await this.db.query(`
     SELECT
       T2.id,
@@ -81,8 +81,8 @@ LIMIT 50;
     WHERE ph.played_at > NOW() - INTERVAL '7 days'
     GROUP BY T2.id, T4.name, T3."songId"
     ORDER BY play_count DESC
-    LIMIT 50;
-  `, [userId]);
+    LIMIT $2 OFFSET $3;
+  `, [userId,limit,offset]);
 
   return {
     id: 'trending',
