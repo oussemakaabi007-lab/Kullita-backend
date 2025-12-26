@@ -44,8 +44,11 @@ export class SongsController {
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('thisweek')
-    showThisWeek(@Req() req:any) {
-        return this.songsService.weeklySongs(req.user.userId);
+    showThisWeek( @Req() req, 
+  @Query('limit') limit: number = 10, 
+  @Query('offset') offset: number = 0
+) {
+        return this.songsService.weeklySongs(req.user.userId,limit,offset);
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('mysongs')
