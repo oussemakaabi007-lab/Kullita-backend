@@ -7,8 +7,8 @@ import { use } from 'passport';
 export class UsersController {
   constructor(private usersService: UsersService) {}
   @Get('test')
-test(@Req() req: any) {
-  return { cookies: req.cookies };
+test() {
+  return { message:'okay' };
 }
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
