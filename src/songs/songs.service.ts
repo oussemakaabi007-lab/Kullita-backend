@@ -19,7 +19,7 @@ export class SongsService {
   }
   async findRecentPlays(userId:number,limit:number=10,offset:number=0){
     const res=await this.db.query(`
-    SELECT DISTINCT ON (ph.song_id)
+    SELECT
     T1.song_id as id,
     T1.played_at,
     T2.title,
