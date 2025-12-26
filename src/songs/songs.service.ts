@@ -119,22 +119,21 @@ async searchSongs(query: string, userId: number) {
 async weeklySongs(userId: number, limit: number = 10, offset: number = 0) {
   const query = `
     SELECT
-      T2.id,
-      T2.title,
-      T4.name AS artist,
-      T2."coverUrl",
-      T2."audioUrl",
-      T2."createdAt",
-      CASE
-          WHEN T3."songId" IS NOT NULL THEN TRUE
-          ELSE FALSE
-      END AS "isFavorite"
-    FROM "Song" T2
-    JOIN "User" T4 ON T2."artistId" = T4.id
-    LEFT JOIN "Favorite" T3 ON T2.id = T3."songId" AND T3."userId" = $1
-    WHERE T2."createdAt" >= NOW() - INTERVAL '7 days'
-    ORDER BY T2."createdAt" DESC
-    LIMIT $2 OFFSET $3;
+    T2.id,
+    T2.title,
+    T4.name AS artist,
+    T2."coverUrl",
+    T2."audioUrl",
+    T2."createdAt",
+    EXISTS (
+        SELECT 1 FROM "Favorite" T3 
+        WHERE T3."songId" = T2.id AND T3."userId" = $1
+    ) AS "isFavorite"
+FROM "Song" T2
+JOIN "User" T4 ON T2."artistId" = T4.id
+WHERE T2."createdAt" >= NOW() - INTERVAL '7 days'
+ORDER BY T2."createdAt" DESC
+LIMIT $2 OFFSET $3;
   `;
   const res = await this.db.query(query, [userId, limit, offset]);
   return res.rows;
