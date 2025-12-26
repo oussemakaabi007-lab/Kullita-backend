@@ -9,9 +9,10 @@ export class AuthController {
 async register(@Body() body: any) {
   const { email, name, password, role } = body;
   const user= this.authService.register(email, name, password, role);
+  if((await user).message==="wellcome"){
   this.authService.sendWelcomeEmail(email,name).catch(err => {
       console.error('Email failed to send:', err);
-    });
+    });}
   return user;
 }
 

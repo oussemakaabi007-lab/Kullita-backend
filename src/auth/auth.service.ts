@@ -31,7 +31,8 @@ export class AuthService {
       WHERE id = $3
     `;
     await this.db.query(updateQuery, [token, expiry, user.id]);
-    const url = `http://localhost:3000/resetpassword?token=${token}`;
+    const FRONTEND_URL = this.configService.get('FRONTEND_URL');
+    const url = `${FRONTEND_URL}/resetpassword?token=${token}`;
     const BREVO_API_KEY = this.configService.get('BREVO_API_KEY');
    try {
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
