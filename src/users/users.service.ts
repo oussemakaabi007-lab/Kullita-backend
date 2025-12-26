@@ -27,13 +27,13 @@ export class UsersService {
   return {message:"wellcome"}}
 
 
-  async findByUsername(username: string) {
-    const result = await this.db.query(`SELECT * FROM "User" WHERE name = $1`, [username]);
+  async findByUser(username: string,email:string) {
+    const result = await this.db.query(`SELECT * FROM "User" WHERE name = $1 or email=$2`, [username,email]);
     return result.rows[0];
   }
 
   async validateUser(username: string, password: string) {
-    const user = await this.findByUsername(username);
+    const user = await this.findByUser(username,username);
     if (!user) return null;
     const match = await bcrypt.compare(password, user.password);
     if (!match) return null;
@@ -56,7 +56,7 @@ export class UsersService {
     return { deleted: true };
   }
   async updateUser(userId:number ,userName:string){
-      const checkuser = await this.findByUsername(userName);
+      const checkuser = await this.findByUser(userName,userName);
       if(checkuser){
         throw new Error("username is taken");
       }
