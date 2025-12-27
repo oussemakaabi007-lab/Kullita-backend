@@ -28,6 +28,7 @@ export class SongsService {
     T4.name AS artist_name,
     T2."audioUrl",
     T2."coverUrl",
+    T2."createdAt",
     CASE
         WHEN T3."songId" IS NOT NULL THEN TRUE
         ELSE FALSE
@@ -71,6 +72,7 @@ LIMIT $2 OFFSET $3;
       T4.name AS artist,
       T2."coverUrl",
       T2."audioUrl",
+      T2."createdAt",
       COUNT(ph.id) AS play_count,
       CASE
           WHEN T3."songId" IS NOT NULL THEN TRUE
@@ -102,6 +104,7 @@ async searchSongs(query: string, userId: number) {
       T4.name AS artist,
       T2."coverUrl",
       T2."audioUrl",
+      T2."createdAt",
       CASE
           WHEN T3."songId" IS NOT NULL THEN TRUE
           ELSE FALSE
