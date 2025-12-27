@@ -25,7 +25,7 @@ export class SongsService {
     T1.song_id as id,
     T1.played_at,
     T2.title,
-    T4.name AS artist_name,
+    T4.name AS artist,
     T2."audioUrl",
     T2."coverUrl",
     T2."createdAt",
