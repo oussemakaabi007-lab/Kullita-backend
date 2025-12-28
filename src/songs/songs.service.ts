@@ -95,9 +95,12 @@ LIMIT $2 OFFSET $3;
   };
 }
 
-  async searchSongs(query: string, userId: number, limit: number = 30, offset: number = 0) {
+async searchSongs(query: string, userId: number, limit: number = 30, offset: number = 0) {
   const searchTerm = `%${query}%`;
   
+  // LOG THIS to your terminal to verify what is actually arriving
+  console.log(`DEBUG SEARCH: UserID=${userId} (${typeof userId}), Query=${query}`);
+
   const sql = `
     SELECT
       T2.id,
@@ -108,18 +111,18 @@ LIMIT $2 OFFSET $3;
       T2."createdAt",
       EXISTS (
         SELECT 1 FROM "Favorite" T3 
-        WHERE T3."songId" = T2.id AND T3."userId" = $2
+        WHERE T3."songId" = T2.id AND T3."userId" = $2::int
       ) AS "isFavorite"
     FROM "Song" T2
     JOIN "User" T4 ON T2."artistId" = T4.id
     WHERE (T2.title ILIKE $1 OR T4.name ILIKE $1)
     ORDER BY T2."createdAt" DESC
-    LIMIT $3 OFFSET $4;
+    LIMIT $3::int OFFSET $4::int;
   `;
+
   const res = await this.db.query(sql, [searchTerm, userId, limit, offset]);
   return { songs: res.rows };
 }
-
 async weeklySongs(userId: number, limit: number = 10, offset: number = 0) {
   const query = `
     SELECT
