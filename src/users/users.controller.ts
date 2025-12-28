@@ -1,15 +1,22 @@
-import { Controller, Delete, Get, UseGuards, Req, Patch, Body } from '@nestjs/common';
+import { Controller, Delete, Get, UseGuards, Req, Patch, Body,Logger } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { use } from 'passport';
 
+
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
+ private readonly logger = new Logger('KeepAlive');
+
   @Get('test')
-test() {
-  return { message:'okay' };
-}
+  test() {
+    this.logger.log(`Ping received at: ${new Date().toISOString()}`);
+    return { 
+      message: 'okay',
+      timestamp: new Date().toISOString() 
+    };
+  }
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   getProfile(@Req() req: any) {
