@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send HEAD request to Render
-        run: curl -I "https://kullita-backend.onrender.com"
+        run: curl -sL -I "https://kullita-backend.onrender.com/users/test"
