@@ -94,7 +94,7 @@ LIMIT $2 OFFSET $3;
     items: res.rows
   };
 }
-async searchSongs(query: string, userId: number) {
+async searchSongs(query: string, userId: number, limit: number = 30, offset: number = 0) {
   const searchTerm = `%${query}%`;
   
   const sql = `
@@ -105,23 +105,19 @@ async searchSongs(query: string, userId: number) {
       T2."coverUrl",
       T2."audioUrl",
       T2."createdAt",
-      COALESCE(
-        EXISTS (
-          SELECT 1 
-          FROM "Favorite" T3 
-          WHERE T3."songId" = T2.id 
-          AND T3."userId" = $2::int
-        ), 
-        FALSE
-      ) AS "isFavorite"
+      CASE 
+        WHEN T3."songId" IS NOT NULL THEN TRUE 
+        ELSE FALSE 
+      END AS "isFavorite"
     FROM "Song" T2
     JOIN "User" T4 ON T2."artistId" = T4.id
+    LEFT JOIN "Favorite" T3 ON T2.id = T3."songId" AND T3."userId" = $2
     WHERE (T2.title ILIKE $1 OR T4.name ILIKE $1)
     ORDER BY T2."createdAt" DESC
-    LIMIT 30;
+    LIMIT $3 OFFSET $4;
   `;
 
-  const res = await this.db.query(sql, [searchTerm, userId]);
+  const res = await this.db.query(sql, [searchTerm, userId, limit, offset]);
   return { songs: res.rows };
 }
 async weeklySongs(userId: number, limit: number = 10, offset: number = 0) {

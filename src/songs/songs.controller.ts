@@ -37,11 +37,21 @@ export class SongsController {
     }
     @UseGuards(AuthGuard('jwt'))
     @Get('search')
-    async search(@Query('q') query: string, @Req() req: any) {
-    const userId = req.user.id;
-    if (!query) return { songs: [] };
-    return this.songsService.searchSongs(query, userId);
-    }
+   async search(
+  @Query('q') query: string, 
+  @Query('limit') limit: number = 30, 
+  @Query('offset') offset: number = 0, 
+  @Req() req: any
+) {
+  if (!query) return { songs: [] };
+
+  return this.songsService.searchSongs(
+    query, 
+    req.userId, 
+    Number(limit), 
+    Number(offset)
+  );
+}
     @UseGuards(AuthGuard('jwt'))
     @Get('thisweek')
     showThisWeek( @Req() req, 
