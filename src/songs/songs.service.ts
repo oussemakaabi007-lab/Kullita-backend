@@ -97,10 +97,6 @@ LIMIT $2 OFFSET $3;
 
 async searchSongs(query: string, userId: number, limit: number = 30, offset: number = 0) {
   const searchTerm = `%${query}%`;
-  
-  // LOG THIS to your terminal to verify what is actually arriving
-  console.log(`DEBUG SEARCH: UserID=${userId} (${typeof userId}), Query=${query}`);
-
   const sql = `
     SELECT
       T2.id,

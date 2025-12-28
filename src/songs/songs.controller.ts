@@ -47,7 +47,7 @@ export class SongsController {
 
   return this.songsService.searchSongs(
     query, 
-    req.userId, 
+    req.user.userId, 
     Number(limit), 
     Number(offset)
   );
