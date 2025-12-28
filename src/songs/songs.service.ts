@@ -105,10 +105,14 @@ async searchSongs(query: string, userId: number) {
       T2."coverUrl",
       T2."audioUrl",
       T2."createdAt",
-      EXISTS (
-        SELECT 1 
-        FROM "Favorite" T3 
-        WHERE T3."songId" = T2.id AND T3."userId" = $2
+      COALESCE(
+        EXISTS (
+          SELECT 1 
+          FROM "Favorite" T3 
+          WHERE T3."songId" = T2.id 
+          AND T3."userId" = $2::int
+        ), 
+        FALSE
       ) AS "isFavorite"
     FROM "Song" T2
     JOIN "User" T4 ON T2."artistId" = T4.id
