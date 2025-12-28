@@ -105,14 +105,15 @@ async searchSongs(query: string, userId: number) {
       T2."coverUrl",
       T2."audioUrl",
       T2."createdAt",
-      CASE
-          WHEN T3."songId" IS NOT NULL THEN TRUE
-          ELSE FALSE
-      END AS "isFavorite"
+      EXISTS (
+        SELECT 1 
+        FROM "Favorite" T3 
+        WHERE T3."songId" = T2.id AND T3."userId" = $2
+      ) AS "isFavorite"
     FROM "Song" T2
     JOIN "User" T4 ON T2."artistId" = T4.id
-    LEFT JOIN "Favorite" T3 ON T2.id = T3."songId" AND T3."userId" = $2
-    WHERE T2.title ILIKE $1 OR T4.name ILIKE $1
+    WHERE (T2.title ILIKE $1 OR T4.name ILIKE $1)
+    ORDER BY T2."createdAt" DESC
     LIMIT 30;
   `;
 
