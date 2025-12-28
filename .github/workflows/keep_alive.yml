@@ -1,0 +1,13 @@
+name: Render Keep Alive
+
+on:
+  schedule:
+    - cron: '*/7 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping_render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send HEAD request to Render
+        run: curl -I "https://kullita-backend.onrender.com"
