@@ -9,12 +9,26 @@ export class PlaylistsService{
         const res=await this.db.query(`insert into "Playlist" ("userId","name","createdAt","updatedAt") values($1,$2,now(),now()) RETURNING *`,[userId,name]);
         return {sucsess:true,playlist:res.rows[0]};
     }
-    async showAllPlaylist(userId:number){
-        const res=await this.db.query(`SELECT * FROM "Playlist" WHERE "userId"=$1`, [userId]);
-         const usernames=await this.db.query(`SELECT name FROM "User" where id=$1`, [userId]);
-        return {username:usernames.rows[0].name,
-            playlists:res.rows};
-    }
+   async showAllPlaylist(userId: number) {
+  const sql = `
+    SELECT 
+      p.*, 
+      COUNT(ps."songId")::int AS "songCount"
+    FROM "Playlist" p
+    LEFT JOIN "PlaylistSong" ps ON p.id = ps."playlistId"
+    WHERE p."userId" = $1
+    GROUP BY p.id
+    ORDER BY p."createdAt" DESC;
+  `;
+
+  const res = await this.db.query(sql, [userId]);
+  const usernames = await this.db.query(`SELECT name FROM "User" WHERE id = $1`, [userId]);
+
+  return {
+    username: usernames.rows[0]?.name || "User",
+    playlists: res.rows
+  };
+}
     async deletePlaylist(playlistId:number){
         await this.db.query(`delete from "Playlist" where id=$1`,[playlistId]);
         return {deleted:true}
