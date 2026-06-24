@@ -5,9 +5,9 @@ import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'clo
 export class CloudinaryService {
   constructor() {
     cloudinary.config({
-      cloud_name: 'dvimfakyh',
-      api_key: '651751727725752',
-      api_secret: 'N_nc7dgJps8uxn2-kM6Dh8fhz-Q',
+       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
     });
   }
 
